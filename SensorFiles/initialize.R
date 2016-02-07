@@ -2,19 +2,25 @@ f.initialize <- function(sdSystemAge = 7, sdBuilding = 7,
                          sdTemp = 7, sdNonLinear = 1, sampleFlag = FALSE, 
                          downSampleTime = 10, fold = 1, type = "linearModel", transformFlag = TRUE ) {
   
+  #check install packages
+  pkgs = c("survival","pec","prodlim","randomForestSRC","ggRandomForests","rpart","partykit","rpart.plot","data.table")
+  isPkgInstal = pkgs %in% rownames(installed.packages())
+  for(k in 1 : length(isPkgInstal) ){
+    if(!isPkgInstal[k]){
+      install.packages(pkgs[k], dependencies = TRUE, repos="http://cran.rstudio.com/")
+    }
+  }
   library(survival)
   library(pec)
-  library(rms)
-  library(data.table)
   library(MASS)
-  library(plyr)
   library(prodlim)
   library(randomForestSRC)
-  library(caret)
   library(ggRandomForests)
   library(rpart)
   library(rpart.plot)
-  library(survpack)
+  library(partykit)
+  library(data.table)
+  # to do: install packages
   
   setwd("~/presentation/SensorFiles")
   
