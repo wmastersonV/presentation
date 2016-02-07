@@ -1,7 +1,8 @@
 # presentation
 This repo includes R scripts and csv files used in the survival modeling presentation.
 
-To load the data into R, please install R-studio:
+To load the data into R, please install R and R-studio:
+https://cran.rstudio.com/
 https://www.rstudio.com/products/rstudio/download/
 
 Then, open test.R
