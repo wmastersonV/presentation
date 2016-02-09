@@ -3,13 +3,14 @@ f.initialize <- function(sdSystemAge = 7, sdBuilding = 7,
                          downSampleTime = 10, fold = 1, type = "linearModel", transformFlag = TRUE ) {
   
   #check install packages
-  pkgs = c("survival","pec","prodlim","randomForestSRC","ggRandomForests","rpart","partykit","rpart.plot","data.table")
+  pkgs = c("caret","survival","pec","prodlim","randomForestSRC","ggRandomForests","rpart","partykit","rpart.plot","data.table")
   isPkgInstal = pkgs %in% rownames(installed.packages())
   for(k in 1 : length(isPkgInstal) ){
     if(!isPkgInstal[k]){
       install.packages(pkgs[k], dependencies = TRUE, repos="http://cran.rstudio.com/")
     }
   }
+  library(caret)
   library(survival)
   library(pec)
   library(MASS)

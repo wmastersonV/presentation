@@ -83,7 +83,7 @@ rpart.plot(mTree2, main = paste0("Survival Tree, complexity = .02"),  cex=1)
 # lower complexity: possibly more overfitting
 mTree1 <- rpart(formula = formula(Surv(time2, isDeath) ~ .), cp = .015, data = dat1)
 mTree1
-rpart.plot(mTree1, main = paste0("Survival Tree, complexity = .01"),  cex=1)
+rpart.plot(mTree1, main = paste0("Survival Tree, complexity = .015"),  cex=1)
 
 # conditional inference tree
 mCtree <- ctree(formula = formula(Surv(time2, isDeath) ~ .), maxdepth = 2, data = dat1)
