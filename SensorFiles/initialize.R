@@ -22,12 +22,10 @@ f.initialize <- function(sdSystemAge = 7, sdBuilding = 7,
   library(data.table)
   # to do: install packages
   
-  setwd("~/presentation/SensorFiles")
-  
   # features to add:
   # geographic location, client, price of electricity, 
-  dat1 <- data.table(read.csv("dat1.csv"))
-  dat2 <- data.table(read.csv("dat2.csv"))
+  dat1 <- data.table(read.csv("SensorFiles/dat1.csv"))
+  dat2 <- data.table(read.csv("SensorFiles/dat2.csv"))
   
   setkey(dat1, BuildingID)
   setkey(dat2, BuildingID)
