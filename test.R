@@ -1,8 +1,8 @@
 rm(list = ls())
-# load(file = "~/presentation/SensorFiles/systemFactor.RData")
-source("~/presentation/SensorFiles/transformDummy.R")
-source("~/presentation/SensorFiles/initialize.R")
-source("~/presentation/SensorFiles/nonLinear.R")
+# load(file = "SensorFiles/systemFactor.RData")
+source("SensorFiles/transformDummy.R")
+source("SensorFiles/initialize.R")
+source("SensorFiles/nonLinear.R")
 
 # generate simulated failure times for dataset
 # Try to standardize features before!
@@ -26,7 +26,7 @@ plot(mKM)
 
 # cox model ---------------------------------------------------------------
 # semi-parametric linear model
-# parametric portion: similar to linear regression 
+# parametric portion: similar to linear regression
 # non-parametric portion: baseline survival curve, similar to Kaplan-Meier
 
 mCox1 <- cph(formula(Surv(time2, isDeath) ~ .), dat1, singular.ok = TRUE)
@@ -46,7 +46,7 @@ survProb <- predictSurvProb(mCox2Init, dat1, times)
 survProbSort = apply(survProb, 2, function(y) sort(y, decreasing = FALSE))
 # find index of survival time at 50th percentile
 medLife = lapply(1:dim(survProb)[1], function(y) findInterval(0.5, sort(survProb[y,]),
-                                                             rightmost.closed = FALSE, 
+                                                             rightmost.closed = FALSE,
                                                              all.inside = FALSE))
 medLife = unlist(medLife)
 #reformat
@@ -56,8 +56,8 @@ hist(medLifeFinal)
 
 # mean residual life
 # vectorized computation of integral S(t) using left Riemann sum method for integration
-mRes <- lapply(1:dim(survProb)[1], function(col) 
-  sum(unlist(lapply(1:(dim(survProb)[2] - 1), function(i) 
+mRes <- lapply(1:dim(survProb)[1], function(col)
+  sum(unlist(lapply(1:(dim(survProb)[2] - 1), function(i)
     (survProb[col,i] * (times[i+1] - times[i]))))))
 mRes = unlist(mRes)
 hist(mRes)
@@ -70,7 +70,7 @@ hist(mRes - medLifeFinal)
 predCox = predictSurvProb(mCox2StepAIC, dat1[1:10,], times)
 
 # plot predicted survival curves
-plot(predCox[1,],col=10, ylab="S(t)", xlab = "time", type = "l", main = "Predicted Survival curves using Cox Model") + 
+plot(predCox[1,],col=10, ylab="S(t)", xlab = "time", type = "l", main = "Predicted Survival curves using Cox Model") +
   lines(predCox[3,], col=20) + lines(predCox[5,], col=30)
 
 
@@ -93,8 +93,8 @@ plot(mCtree)
 mPecTree <- pecRpart(formula = formula(Surv(time2, isDeath) ~ .), cp = .01, data = dat1)
 predTree = predictSurvProb(mPecTree, dat1[1:10,], times)
 
-plot(predTree[1,], ylab="S(t)", xlab = "time", type = "l", main = "Predicted Survival curves using Tree", col = 10) + 
-  lines(predTree[3,],  col = 20) + lines(predTree[5,], col=30) 
+plot(predTree[1,], ylab="S(t)", xlab = "time", type = "l", main = "Predicted Survival curves using Tree", col = 10) +
+  lines(predTree[3,],  col = 20) + lines(predTree[5,], col=30)
 
 # random survival forest --------------------------------------------------
 # non-linear ensemble model
@@ -104,36 +104,36 @@ mRSF
 plot(mRSF)
 
 # random survival forest output
-plot.survival(mRSF) 
+plot.survival(mRSF)
 
 predForest = predictSurvProb(mRSF, dat1[1:10,], times)
-dev.off() 
-plot(predForest[1,], col=10, ylab="S(t)", xlab = "time", type = "l", main = "Predicted Survival curves using Random Survival Forest") + 
-  lines(predForest[3,], col=20) + lines(predForest[5,], col=30) 
+dev.off()
+plot(predForest[1,], col=10, ylab="S(t)", xlab = "time", type = "l", main = "Predicted Survival curves using Random Survival Forest") +
+  lines(predForest[3,], col=20) + lines(predForest[5,], col=30)
 
 # compare predicted survival curves ------------------------------------------
 # predicted survival curves
 plot(predTree[1,], type = "l", main = "obs 1: predicted S(t) for different models", col = 10) +
-  lines(predForest[1,], col=20) + 
-  lines(predCox[1,], col=30) 
+  lines(predForest[1,], col=20) +
+  lines(predCox[1,], col=30)
 
 # random survival forest vs Cox--------------------------------------------------
-mRSF1 <- rfsrc(formula(Surv(time2, isDeath) ~ BuildingID + System   +   SystemAge   + BuildingAge + product  +   Country +    tempDiff  ), 
+mRSF1 <- rfsrc(formula(Surv(time2, isDeath) ~ BuildingID + System   +   SystemAge   + BuildingAge + product  +   Country +    tempDiff  ),
                dat1, ntree = 100)
 mCox2Init <- coxph(formula(Surv(time2, isDeath) ~  BuildingID + System   +   SystemAge   + BuildingAge + product  +   Country +    tempDiff), dat1)
 mCox2StepAIC <- stepAIC(mCox2Init)
 mCox2StepAIC
-p1 <- pec( list(mCox2StepAIC, mRSF1), formula = Surv(time2, isDeath) ~  BuildingID + System   +   SystemAge   + BuildingAge + product  +   Country +    tempDiff , 
+p1 <- pec( list(mCox2StepAIC, mRSF1), formula = Surv(time2, isDeath) ~  BuildingID + System   +   SystemAge   + BuildingAge + product  +   Country +    tempDiff ,
            data = dat1, splitMethod = "cv2", cens.model = "marginal")
 p1
 
 # SVM: may need to dummy transform variables
 # too slow
-# t100 = survsvm(formula(Surv(time2, isDeath) ~   System   +   SystemAge   + BuildingAge   +    tempDiff), 
+# t100 = survsvm(formula(Surv(time2, isDeath) ~   System   +   SystemAge   + BuildingAge   +    tempDiff),
 #             data = dat1[1:600,], cox.score = TRUE, max.iter=100)
-# t10000 = survsvm(formula(Surv(time2, isDeath) ~  System   +   SystemAge   + BuildingAge   +    tempDiff), 
+# t10000 = survsvm(formula(Surv(time2, isDeath) ~  System   +   SystemAge   + BuildingAge   +    tempDiff),
 #             data = dat1[1:600,], kernel = "linear", max.iter=10000)
-# 
+#
 # predict(t100, dat1[400:798,])
 
 
@@ -155,14 +155,14 @@ set.seed(1)
 
 # run 10 fold CV
 # IPCW weights: use Kaplan Mier
-# pecOut <- pec( Models, 
+# pecOut <- pec( Models,
 #                formula = fitForm,
 #                data = dat1,
 #                splitMethod = "cv10")
 
 readRDS(file = "pecOut.RData")
 # Integrated Brier score (crps):
-#   
+#
 #   IBS[0;time=8.5)
 # Reference              0.108
 # forest                 0.086
@@ -170,7 +170,7 @@ readRDS(file = "pecOut.RData")
 # mCox2StepAIC           0.099
 
 # save serialized R object
-# saveRDS(pecOut, file = "~/presentation/SensorFiles/pecOut.rds")
+# saveRDS(pecOut, file = "SensorFiles/pecOut.rds")
 
 
 # gg_md <- gg_minimal_depth(mRSF1, lbls = st.labs)
@@ -179,6 +179,4 @@ readRDS(file = "pecOut.RData")
 # plot.variable(mRSF1,vimPlot$vars[c(1)], surv.type = c("mort"))
 # gg_v <- gg_variable(mRSF1, time = c(15, 29),time.labels = c("survival > 30 days", "survival > 90 days"))
 # plot(gg_v, xvar = c("SystemAge"), se = .95, alpha = .4)
-# plot(gg_rfsrc(mRSF1, by="product"))                 
-
-
+# plot(gg_rfsrc(mRSF1, by="product"))
