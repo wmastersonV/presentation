@@ -7,7 +7,7 @@ https://www.rstudio.com/products/rstudio/download/
 
 Then, 
 
-1) open test.R
+1) open Run.R
 
 2) On the top right terminal window, make sure the workspace is pointing to the R project 'presentation'
 
