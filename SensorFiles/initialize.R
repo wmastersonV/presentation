@@ -3,13 +3,14 @@ f.initialize <- function(sdSystemAge = 7, sdBuilding = 7,
                          downSampleTime = 10, fold = 1, type = "linearModel", transformFlag = TRUE ) {
   
   #check install packages
-  pkgs = c("caret","survival","pec","prodlim","randomForestSRC","ggRandomForests","rpart","partykit","rpart.plot","data.table")
+  pkgs = c("rms", "caret","survival","pec","prodlim","randomForestSRC","ggRandomForests","rpart","partykit","rpart.plot","data.table")
   isPkgInstal = pkgs %in% rownames(installed.packages())
   for(k in 1 : length(isPkgInstal) ){
     if(!isPkgInstal[k]){
       install.packages(pkgs[k], dependencies = TRUE, repos="http://cran.rstudio.com/")
     }
   }
+  library(rms)
   library(caret)
   library(survival)
   library(pec)
@@ -25,13 +26,16 @@ f.initialize <- function(sdSystemAge = 7, sdBuilding = 7,
   
   # features to add:
   # geographic location, client, price of electricity, 
-  dat1 <- data.table(read.csv("SensorFiles/dat1.csv"))
-  dat2 <- data.table(read.csv("SensorFiles/dat2.csv"))
+#   dat1 <- data.table(read.csv("SensorFiles/dat1.csv"))
+#   dat2 <- data.table(read.csv("SensorFiles/dat2.csv"))
+#   
+#   setkey(dat1, BuildingID)
+#   setkey(dat2, BuildingID)
+#   
+#   dat <- merge(dat1, dat2, by.x = BuildingID)
+  dat = read.csv("SensorFiles/dat.csv")
+  # write.csv(dat, file = "SensorFiles/dat.csv", row.names = FALSE)
   
-  setkey(dat1, BuildingID)
-  setkey(dat2, BuildingID)
-  
-  dat <- merge(dat1, dat2, by.x = BuildingID)
   levels(dat$product) <- c("A", "B", "C", "D", "E")
   table(dat$BuildingID)
   table(dat$product)

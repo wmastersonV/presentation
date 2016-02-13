@@ -30,7 +30,9 @@ plot(mKM)
 # non-parametric portion: baseline survival curve, similar to Kaplan-Meier
 
 mCox1 <- cph(formula(Surv(time2, isDeath) ~ .), dat1, singular.ok = TRUE)
-# explain what is meant by this error
+# explain what is meant by this error: 
+# singular matrix occurs due to collinear features
+# http://stackoverflow.com/questions/20977401/coxph-x-matrix-deemed-to-be-singular
 mCox1
 set.seed(1)
 mCox2Init <- coxph(formula(Surv(time2, isDeath) ~ SystemAge + BuildingAge + product * tempDiff), dat1)
